@@ -48,6 +48,17 @@ const BASE = 'https://crosswalk.titles.media'
       wikidata_id: "Q107105860"
     }, null, 2)}</pre>
 
+    <h2>Bulk downloads</h2>
+    <p>Full dataset — all fields:</p>
+    <pre><code>
+<a href="/exports/movies/full/movies.json">{BASE}/exports/movies/full/movies.json</a>
+<a href="/exports/movies/full/movies.csv">{BASE}/exports/movies/full/movies.csv</a>
+<a href="/exports/movies/full/movies.ndjson">{BASE}/exports/movies/full/movies.ndjson</a></code></pre>
+    <p>IDs only — no title or year:</p>
+    <pre><code>
+<a href="/exports/movies/ids/movies.json">{BASE}/exports/movies/ids/movies.json</a>
+<a href="/exports/movies/ids/movies.csv">{BASE}/exports/movies/ids/movies.csv</a></code></pre>
+
     <h2>Response shape</h2>
     <p>All endpoints return a <code>full</code> record. Fields:</p>
     <pre><code>
