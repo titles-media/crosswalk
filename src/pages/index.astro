@@ -1,17 +1,63 @@
 ---
-
+const BASE = 'https://crosswalk.titles.media'
 ---
 
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <title>crosswalk.titles.media</title>
+    <style>
+      body { font-family: monospace; max-width: 720px; margin: 3rem auto; padding: 0 1rem; color: #222; }
+      h1 { font-size: 1.2rem; margin-bottom: 0.25rem; }
+      p { margin: 0.5rem 0; }
+      h2 { font-size: 1rem; margin-top: 2rem; margin-bottom: 0.5rem; }
+      code { background: #f4f4f4; padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.95em; }
+      pre { background: #f4f4f4; padding: 1rem; border-radius: 4px; overflow-x: auto; }
+      a { color: #0066cc; }
+      .muted { color: #666; }
+    </style>
+  </head>
+  <body>
+    <h1>crosswalk.titles.media</h1>
+    <p>A static JSON API mapping film identities across IMDB, TMDB, Wikidata, and Letterboxd.</p>
+    <p>Full documentation: <a href="https://github.com/titles-media/crosswalk">titles-media/crosswalk</a> on GitHub.</p>
+
+    <h2>Endpoints</h2>
+
+    <p>Look up a film by internal ID:</p>
+    <pre><code>{BASE}/movies/&#123;id&#125;.json</code></pre>
+
+    <p>Look up a film by external ID:</p>
+    <pre><code>{BASE}/movies/by_id/&#123;source&#125;/&#123;source_id&#125;.json</code></pre>
+    <p>Supported sources: <code>imdb</code>, <code>tmdb</code>, <code>wikidata</code>, <code>letterboxd</code></p>
+
+    <h2>Example</h2>
+    <pre><code><a href="/movies/by_id/imdb/tt12042730.json">{BASE}/movies/by_id/imdb/tt12042730.json</a></code></pre>
+    <pre><code><a href="/movies/p148c7y3.json">{BASE}/movies/p148c7y3.json</a></code></pre>
+    <pre>{JSON.stringify({
+      id: "p148c7y3",
+      title: "Project Hail Mary",
+      year: 2026,
+      imdb_id: "tt12042730",
+      letterboxd_id: "project-hail-mary",
+      tmdb_id: "687163",
+      wikidata_id: "Q107105860"
+    }, null, 2)}</pre>
+
+    <h2>Response shape</h2>
+    <p>All endpoints return a <code>full</code> record. Fields:</p>
+    <pre><code>
+id            internal Blake2b ID (always present)
+title         film title (always present)
+year          release year (always present)
+imdb_id       may be absent
+tmdb_id       may be absent
+wikidata_id   may be absent
+letterboxd_id may be absent
+</code></pre>
+  </body>
 </html>

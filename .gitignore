@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# main branch artifacts (checked out during CI, never committed here)
+data
