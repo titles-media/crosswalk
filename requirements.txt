@@ -1,0 +1,15 @@
+attrs==26.1.0
+black==26.3.1
+click==8.3.3
+flake8==7.3.0
+flake8-bugbear==25.11.29
+isort==8.0.1
+mccabe==0.7.0
+mypy_extensions==1.1.0
+packaging==26.2
+pathspec==1.1.0
+platformdirs==4.9.6
+pycodestyle==2.14.0
+pyflakes==3.4.0
+pytokens==0.4.1
+PyYAML==6.0.3
