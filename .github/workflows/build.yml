@@ -49,6 +49,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "No changes to exports/ — nothing to commit."
           else
-            git commit -m "Automated build: Update export files"
+            git commit -m "Automated build: rebuild crosswalk artifacts"
             git push
           fi
