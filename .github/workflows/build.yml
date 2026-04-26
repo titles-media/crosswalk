@@ -1,0 +1,54 @@
+name: Build Crosswalk Artifacts
+
+on:
+  repository_dispatch:
+    types: [crosswalk-data-updated]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout crosswalk
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: crosswalk
+
+      - name: Checkout crosswalk-data
+        uses: actions/checkout@v4
+        with:
+          repository: titles-media/crosswalk-data
+          token: ${{ secrets.GITHUB_TOKEN }}
+          path: crosswalk-data
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: pip install -r crosswalk/requirements.txt
+
+      - name: Run build
+        run: >
+          python crosswalk/scripts/build_crosswalk.py
+          crosswalk-data/data/works/movies.csv
+          --core-schema crosswalk-data/schema/works.yaml
+          --source-schema crosswalk-data/schema/works/movies.yaml
+
+      - name: Validate exports
+        run: python crosswalk/scripts/validate_exports.py crosswalk/exports/movies
+
+      - name: Commit and push artifacts
+        run: |
+          cd crosswalk
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add exports/
+          if git diff --cached --quiet; then
+            echo "No changes to exports/ — nothing to commit."
+          else
+            git commit -m "Automated build: Update export files"
+            git push
+          fi
