@@ -15,6 +15,7 @@ const BASE = 'https://crosswalk.titles.media'
       h1 { font-size: 1.2rem; margin-bottom: 0.25rem; }
       p { margin: 0.5rem 0; }
       h2 { font-size: 1rem; margin-top: 2rem; margin-bottom: 0.5rem; }
+      h3 { font-size: 0.95rem; margin-top: 1.5rem; margin-bottom: 0.25rem; color: #444; }
       code { background: #f4f4f4; padding: 0.1em 0.3em; border-radius: 3px; font-size: 0.95em; }
       pre { background: #f4f4f4; padding: 1rem; border-radius: 4px; overflow-x: auto; }
       a { color: #0066cc; }
@@ -23,21 +24,28 @@ const BASE = 'https://crosswalk.titles.media'
   </head>
   <body>
     <h1>crosswalk.titles.media</h1>
-    <p>A static JSON API mapping film identities across IMDB, TMDB, Wikidata, and Letterboxd.</p>
+    <p>A static JSON API mapping film works and persons across IMDb, TMDB, Wikidata, and Letterboxd.</p>
     <p>Full documentation: <a href="https://github.com/titles-media/crosswalk">titles-media/crosswalk</a> on GitHub.</p>
 
     <h2>Endpoints</h2>
 
+    <h3>Movies</h3>
     <p>Look up a film by internal ID:</p>
     <pre><code>{BASE}/movies/&#123;id&#125;.json</code></pre>
-
     <p>Look up a film by external ID:</p>
     <pre><code>{BASE}/movies/by_id/&#123;source&#125;/&#123;source_id&#125;.json</code></pre>
     <p>Supported sources: <code>imdb</code>, <code>tmdb</code>, <code>wikidata</code>, <code>letterboxd</code></p>
 
-    <h2>Example</h2>
-    <pre><code><a href="/movies/by_id/imdb/tt12042730.json">{BASE}/movies/by_id/imdb/tt12042730.json</a></code></pre>
-    <pre><code><a href="/movies/p148c7y3.json">{BASE}/movies/p148c7y3.json</a></code></pre>
+    <h3>Persons</h3>
+    <p>Look up a person by internal ID:</p>
+    <pre><code>{BASE}/persons/&#123;id&#125;.json</code></pre>
+    <p>Look up a person by external ID:</p>
+    <pre><code>{BASE}/persons/by_id/&#123;source&#125;/&#123;source_id&#125;.json</code></pre>
+    <p>Supported sources: <code>imdb</code>, <code>tmdb</code>, <code>wikidata</code></p>
+
+    <h2>Examples</h2>
+    <pre><code><a href="/movies/by_id/imdb/tt12042730.json">{BASE}/movies/by_id/imdb/tt12042730.json</a>
+<a href="/movies/p148c7y3.json">{BASE}/movies/p148c7y3.json</a></code></pre>
     <pre>{JSON.stringify({
       id: "p148c7y3",
       title: "Project Hail Mary",
@@ -48,19 +56,48 @@ const BASE = 'https://crosswalk.titles.media'
       wikidata_id: "Q107105860"
     }, null, 2)}</pre>
 
+    <pre><code><a href="/persons/by_id/imdb/nm0000759.json">{BASE}/persons/by_id/imdb/nm0000759.json</a>
+<a href="/persons/pelfst4h.json">{BASE}/persons/pelfst4h.json</a></code></pre>
+    <pre>{JSON.stringify({
+      id: "pelfst4h",
+      name_last: "Anderson",
+      name_first: "Paul",
+      name_middle: "Thomas",
+      birth_year: 1970,
+      birth_month: 6,
+      birth_day: 26,
+      imdb_id: "nm0000759",
+      wikidata_id: "Q25132",
+      tmdb_id: "4762"
+    }, null, 2)}</pre>
+
     <h2>Bulk downloads</h2>
+
+    <h3>Movies</h3>
     <p>Full dataset — all fields:</p>
     <pre><code>
 <a href="/exports/movies/full/movies.json">{BASE}/exports/movies/full/movies.json</a>
 <a href="/exports/movies/full/movies.csv">{BASE}/exports/movies/full/movies.csv</a>
 <a href="/exports/movies/full/movies.ndjson">{BASE}/exports/movies/full/movies.ndjson</a></code></pre>
-    <p>IDs only — no title or year:</p>
+    <p>IDs only:</p>
     <pre><code>
 <a href="/exports/movies/ids/movies.json">{BASE}/exports/movies/ids/movies.json</a>
 <a href="/exports/movies/ids/movies.csv">{BASE}/exports/movies/ids/movies.csv</a></code></pre>
 
-    <h2>Response shape</h2>
-    <p>All endpoints return a <code>full</code> record. Fields:</p>
+    <h3>Persons</h3>
+    <p>Full dataset — all fields:</p>
+    <pre><code>
+<a href="/exports/persons/full/persons.json">{BASE}/exports/persons/full/persons.json</a>
+<a href="/exports/persons/full/persons.csv">{BASE}/exports/persons/full/persons.csv</a>
+<a href="/exports/persons/full/persons.ndjson">{BASE}/exports/persons/full/persons.ndjson</a></code></pre>
+    <p>IDs only:</p>
+    <pre><code>
+<a href="/exports/persons/ids/persons.json">{BASE}/exports/persons/ids/persons.json</a>
+<a href="/exports/persons/ids/persons.csv">{BASE}/exports/persons/ids/persons.csv</a></code></pre>
+
+    <h2>Response shapes</h2>
+
+    <h3>Movie</h3>
     <pre><code>
 id            internal Blake2b ID (always present)
 title         film title (always present)
@@ -69,6 +106,20 @@ imdb_id       may be absent
 tmdb_id       may be absent
 wikidata_id   may be absent
 letterboxd_id may be absent
+</code></pre>
+
+    <h3>Person</h3>
+    <pre><code>
+id            internal Blake2b ID (always present)
+name_last     family name or full name for mononyms (always present)
+name_first    given name (absent for mononyms)
+name_middle   middle name, only when part of credited identity
+birth_year    four-digit birth year (always present)
+birth_month   may be absent
+birth_day     may be absent
+imdb_id       may be absent
+tmdb_id       may be absent
+wikidata_id   may be absent
 </code></pre>
   </body>
 </html>
