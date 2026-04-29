@@ -32,15 +32,24 @@ jobs:
       - name: Install dependencies
         run: pip install -r crosswalk/requirements.txt
 
-      - name: Run build
+      - name: Build works
         run: >
-          python crosswalk/scripts/build_crosswalk.py
+          python crosswalk/scripts/build_works.py
           crosswalk-data/data/works/movies.csv
           --core-schema crosswalk-data/schema/works.yaml
           --source-schema crosswalk-data/schema/works/movies.yaml
 
-      - name: Validate exports
+      - name: Build persons
+        run: >
+          python crosswalk/scripts/build_persons.py
+          crosswalk-data/data/persons.csv
+          --schema crosswalk-data/schema/persons.yaml
+
+      - name: Validate works exports
         run: python crosswalk/scripts/validate_exports.py crosswalk/exports/movies
+
+      - name: Validate persons exports
+        run: python crosswalk/scripts/validate_exports.py crosswalk/exports/persons
 
       - name: Commit and push artifacts
         run: |

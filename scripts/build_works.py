@@ -41,12 +41,12 @@ def read_csv(csv_path: Path) -> list[dict]:
     return rows
 
 
-def write_outputs(records: list[dict], out_dir: Path, id_fields: list[str]) -> None:
+def write_outputs(
+    records: list[dict], out_dir: Path, id_fields: list[str], stem: str
+) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     by_id_dir = out_dir / "by_id"
     by_id_dir.mkdir(exist_ok=True)
-
-    stem = "movies"
 
     (out_dir / f"{stem}.json").write_text(
         json.dumps(records, indent=2, ensure_ascii=False), encoding="utf-8"
@@ -78,8 +78,10 @@ def write_outputs(records: list[dict], out_dir: Path, id_fields: list[str]) -> N
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Build crosswalk export artifacts")
-    parser.add_argument("csv", type=Path, help="Path to movies.csv")
+    parser = argparse.ArgumentParser(
+        description="Build crosswalk export artifacts for works"
+    )
+    parser.add_argument("csv", type=Path, help="Path to works CSV (e.g. movies.csv)")
     parser.add_argument(
         "--core-schema", required=True, type=Path, help="Path to works.yaml"
     )
@@ -89,6 +91,7 @@ def main() -> None:
     args = parser.parse_args()
 
     csv_path = args.csv.resolve()
+    stem = csv_path.stem  # e.g. "movies" from movies.csv
     repo_root = Path(__file__).resolve().parent.parent
 
     full_fields, id_fields = load_schema(
@@ -110,9 +113,9 @@ def main() -> None:
     full_records = [{k: row[k] for k in full_fields} for row in rows]
     ids_records = [{k: row[k] for k in id_fields} for row in rows]
 
-    exports = repo_root / "exports" / "movies"
-    write_outputs(full_records, exports / "full", id_fields)
-    write_outputs(ids_records, exports / "ids", id_fields)
+    exports = repo_root / "exports" / stem
+    write_outputs(full_records, exports / "full", id_fields, stem)
+    write_outputs(ids_records, exports / "ids", id_fields, stem)
 
     print(f"Wrote exports to {exports}")
 

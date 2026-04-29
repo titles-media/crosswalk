@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """Validate the structure and consistency of generated export files."""
 
+import argparse
 import csv
 import json
 import sys
 from pathlib import Path
 
-FORMATS = ["movies.json", "movies.min.json", "movies.csv", "movies.ndjson"]
 SECTIONS = ["full", "ids"]
 
 errors: list[str] = []
@@ -26,27 +26,24 @@ def check(label: str, fn):
         fail(str(e))
 
 
-def validate_section(section_dir: Path) -> int:
+def validate_section(section_dir: Path, stem: str) -> int:
     """Validate one section (full/ or ids/). Returns the expected row count."""
-    label = section_dir.name
+    print(f"\n[{section_dir.name}]")
 
-    print(f"\n[{label}]")
-
-    # All top-level format files exist
-    for filename in FORMATS:
+    formats = [f"{stem}.json", f"{stem}.min.json", f"{stem}.csv", f"{stem}.ndjson"]
+    for filename in formats:
         check(f"{filename} exists", lambda f=filename: assert_exists(section_dir / f))
 
-    # Load canonical list from movies.json
-    json_path = section_dir / "movies.json"
+    json_path = section_dir / f"{stem}.json"
     if not json_path.exists():
-        fail("movies.json missing — cannot continue section validation")
+        fail(f"{stem}.json missing — cannot continue section validation")
         return 0
 
     with json_path.open(encoding="utf-8") as f:
         records = json.load(f)
 
     check(
-        "movies.json is a non-empty array",
+        f"{stem}.json is a non-empty array",
         lambda: assert_(
             isinstance(records, list) and len(records) > 0,
             "expected non-empty JSON array",
@@ -55,23 +52,21 @@ def validate_section(section_dir: Path) -> int:
 
     row_count = len(records)
 
-    # min.json is a single line
     check(
-        "movies.min.json is single line",
+        f"{stem}.min.json is single line",
         lambda: assert_(
-            (section_dir / "movies.min.json").read_text(encoding="utf-8").count("\n")
+            (section_dir / f"{stem}.min.json").read_text(encoding="utf-8").count("\n")
             == 0,
-            "movies.min.json has multiple lines",
+            f"{stem}.min.json has multiple lines",
         ),
     )
 
-    # min.json parses to same count
     check(
-        "movies.min.json matches row count",
+        f"{stem}.min.json matches row count",
         lambda: assert_(
             len(
                 json.loads(
-                    (section_dir / "movies.min.json").read_text(encoding="utf-8")
+                    (section_dir / f"{stem}.min.json").read_text(encoding="utf-8")
                 )
             )
             == row_count,
@@ -79,37 +74,33 @@ def validate_section(section_dir: Path) -> int:
         ),
     )
 
-    # ndjson: one valid JSON object per line, no trailing newline, correct count
     def check_ndjson():
-        text = (section_dir / "movies.ndjson").read_text(encoding="utf-8")
+        text = (section_dir / f"{stem}.ndjson").read_text(encoding="utf-8")
         assert not text.endswith("\n"), "ndjson has trailing newline"
         lines = text.split("\n")
         assert (
             len(lines) == row_count
         ), f"ndjson has {len(lines)} lines, expected {row_count}"
         for line in lines:
-            json.loads(line)  # raises on invalid JSON
+            json.loads(line)
 
-    check("movies.ndjson line count and validity", check_ndjson)
+    check(f"{stem}.ndjson line count and validity", check_ndjson)
 
-    # CSV row count matches
     def check_csv():
-        with (section_dir / "movies.csv").open(newline="", encoding="utf-8") as f:
+        with (section_dir / f"{stem}.csv").open(newline="", encoding="utf-8") as f:
             csv_rows = list(csv.DictReader(f))
         assert (
             len(csv_rows) == row_count
         ), f"CSV has {len(csv_rows)} rows, expected {row_count}"
 
-    check("movies.csv row count", check_csv)
+    check(f"{stem}.csv row count", check_csv)
 
-    # by_id validation
     by_id_dir = section_dir / "by_id"
     if not by_id_dir.exists():
         fail("by_id/ directory missing")
         return row_count
 
-    by_id_files = sorted(by_id_dir.glob("movies.*.json"))
-    # Only check the non-minified files
+    by_id_files = sorted(by_id_dir.glob(f"{stem}.*.json"))
     canonical_by_id = [f for f in by_id_files if not f.name.endswith(".min.json")]
 
     for by_id_path in canonical_by_id:
@@ -121,13 +112,12 @@ def validate_section(section_dir: Path) -> int:
             for key, record in mapping.items():
                 assert key, f"empty key in {path.name}"
                 assert (
-                    record.get(f) == key
+                    str(record.get(f)) == key
                 ), f"key {key!r} doesn't match field value {record.get(f)!r}"
-            # id field must contain all rows
             if f == "id":
                 assert (
                     len(mapping) == row_count
-                ), f"movies.id.json has {len(mapping)} entries, expected {row_count}"
+                ), f"{stem}.id.json has {len(mapping)} entries, expected {row_count}"
 
         check(f"by_id/{by_id_path.name}", check_by_id)
 
@@ -146,20 +136,18 @@ def assert_(condition: bool, msg: str) -> None:
 
 
 def main() -> None:
-    parser_desc = "Validate crosswalk export files"
-    import argparse
-
-    parser = argparse.ArgumentParser(description=parser_desc)
+    parser = argparse.ArgumentParser(description="Validate crosswalk export files")
     parser.add_argument(
         "exports_dir",
         type=Path,
         nargs="?",
         default=Path(__file__).resolve().parent.parent / "exports" / "movies",
-        help="Path to exports/movies/ (default: auto-detected)",
+        help="Path to exports/<type>/ directory (default: exports/movies/)",
     )
     args = parser.parse_args()
 
     exports_dir = args.exports_dir.resolve()
+    stem = exports_dir.name  # inferred from directory: "movies", "persons", etc.
     print(f"Validating exports at: {exports_dir}")
 
     if not exports_dir.exists():
@@ -171,9 +159,8 @@ def main() -> None:
         if not section_dir.exists():
             fail(f"{section}/ directory missing")
             continue
-        section_counts[section] = validate_section(section_dir)
+        section_counts[section] = validate_section(section_dir, stem)
 
-    # Row counts must match across sections
     if len(section_counts) == len(SECTIONS):
         print("\n[cross-section]")
         check(
