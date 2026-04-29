@@ -1,4 +1,94 @@
 {
+  "f1": {
+    "id": "1nsek5y6",
+    "title": "F1",
+    "year": 2025,
+    "imdb_id": "tt16311594",
+    "letterboxd_id": "f1",
+    "tmdb_id": "911430",
+    "wikidata_id": "Q114246242"
+  },
+  "sentimental-value-2025": {
+    "id": "303wbl6j",
+    "title": "Sentimental Value",
+    "year": 2025,
+    "imdb_id": "tt27714581",
+    "letterboxd_id": "sentimental-value-2025",
+    "tmdb_id": "1124566",
+    "wikidata_id": "Q130284179"
+  },
+  "frankenstein-2025": {
+    "id": "31rtcww6",
+    "title": "Frankenstein",
+    "year": 2025,
+    "imdb_id": "tt1312221",
+    "letterboxd_id": "frankenstein-2025",
+    "tmdb_id": "1062722",
+    "wikidata_id": "Q124393045"
+  },
+  "the-secret-agent-2025": {
+    "id": "4wv039f4",
+    "title": "The Secret Agent",
+    "year": 2025,
+    "imdb_id": "tt27847051",
+    "letterboxd_id": "the-secret-agent-2025",
+    "tmdb_id": "1220564",
+    "wikidata_id": "Q132531438"
+  },
+  "marty-supreme": {
+    "id": "61zgx53s",
+    "title": "Marty Supreme",
+    "year": 2025,
+    "imdb_id": "tt32916440",
+    "letterboxd_id": "marty-supreme",
+    "tmdb_id": "1317288",
+    "wikidata_id": "Q130118681"
+  },
+  "one-battle-after-another": {
+    "id": "6h23kqfn",
+    "title": "One Battle After Another",
+    "year": 2025,
+    "imdb_id": "tt30144839",
+    "letterboxd_id": "one-battle-after-another",
+    "tmdb_id": "1054867",
+    "wikidata_id": "Q117085614"
+  },
+  "blue-moon-2025": {
+    "id": "6q5f9qw3",
+    "title": "Blue Moon",
+    "year": 2025,
+    "imdb_id": "tt32536315",
+    "letterboxd_id": "blue-moon-2025",
+    "tmdb_id": "1299655",
+    "wikidata_id": "Q127118129"
+  },
+  "train-dreams": {
+    "id": "e7sh0teq",
+    "title": "Train Dreams",
+    "year": 2025,
+    "imdb_id": "tt29768334",
+    "letterboxd_id": "train-dreams",
+    "tmdb_id": "1241983",
+    "wikidata_id": "Q126086662"
+  },
+  "hamnet": {
+    "id": "gjewhmf3",
+    "title": "Hamnet",
+    "year": 2025,
+    "imdb_id": "tt14905854",
+    "letterboxd_id": "hamnet",
+    "tmdb_id": "858024",
+    "wikidata_id": "Q122741016"
+  },
+  "bugonia": {
+    "id": "n2skpcy3",
+    "title": "Bugonia",
+    "year": 2025,
+    "imdb_id": "tt12300742",
+    "letterboxd_id": "bugonia",
+    "tmdb_id": "701387",
+    "wikidata_id": "Q125971387"
+  },
   "project-hail-mary": {
     "id": "p148c7y3",
     "title": "Project Hail Mary",
