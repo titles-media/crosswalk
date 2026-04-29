@@ -1,31 +1,37 @@
 # titles.media crosswalk
 
-Stable identifier mappings for film works across IMDb, TMDB, Letterboxd, and Wikidata — served as static JSON, CSV, and NDJSON via GitHub Pages at [`crosswalk.titles.media`](https://crosswalk.titles.media).
+Stable identifier mappings for film works and persons across IMDb, TMDB, Letterboxd, and Wikidata — served as static JSON, CSV, and NDJSON via GitHub Pages at [`crosswalk.titles.media`](https://crosswalk.titles.media).
 
 This repo is the **automated build output** of [`titles-media/crosswalk-data`](https://github.com/titles-media/crosswalk-data). Exports are regenerated on every merge to that repo and committed here by CI. Do not edit `exports/` by hand.
 
 ## Using the data
 
-Exports are available at `crosswalk.titles.media/exports/movies/` in two flavours:
+Exports are available under `crosswalk.titles.media/exports/` organised by type:
 
-- **`full/`** — all fields: `id`, `title`, `year`, `imdb_id`, `wikidata_id`, `tmdb_id`, `letterboxd_id`
-- **`ids/`** — identifier fields only, no title or year
+- `exports/movies/` — film works
+- `exports/persons/` — people (directors, cast, etc.)
+
+Each type ships in two flavours:
+
+- **`full/`** — all fields
+- **`ids/`** — identifier fields only
 
 Each flavour ships as:
 
 | File | Description |
 |---|---|
-| `movies.json` | JSON array, pretty-printed |
-| `movies.min.json` | JSON array, minified |
-| `movies.csv` | CSV with header row |
-| `movies.ndjson` | One JSON object per line |
-| `by_id/movies.{field}.json` | Dict keyed by identifier field |
-| `by_id/movies.{field}.min.json` | Minified version |
+| `{type}.json` | JSON array, pretty-printed |
+| `{type}.min.json` | JSON array, minified |
+| `{type}.csv` | CSV with header row |
+| `{type}.ndjson` | One JSON object per line |
+| `by_id/{type}.{field}.json` | Dict keyed by identifier field |
+| `by_id/{type}.{field}.min.json` | Minified version |
 
-`by_id` files exist for each identifier field: `id`, `imdb_id`, `tmdb_id`, `letterboxd_id`, `wikidata_id`. Rows with an empty value for a given field are omitted from that file. `movies.id.json` always contains all rows.
+Rows with an empty value for a given field are omitted from that field's `by_id` file. `{type}.id.json` always contains all rows.
 
-## Record shape
+## Record shapes
 
+**Movie (`full`):**
 ```json
 {
   "id": "p148c7y3",
@@ -38,11 +44,31 @@ Each flavour ships as:
 }
 ```
 
+`by_id` fields: `id`, `imdb_id`, `tmdb_id`, `letterboxd_id`, `wikidata_id`
+
+**Person (`full`):**
+```json
+{
+  "id": "eq8tjdgp",
+  "name_last": "Nolan",
+  "name_first": "Christopher",
+  "name_middle": "Jonathan",
+  "birth_year": 1970,
+  "birth_month": 7,
+  "birth_day": 30,
+  "imdb_id": "nm0634240",
+  "wikidata_id": "Q25191",
+  "tmdb_id": "525"
+}
+```
+
+Optional fields (`name_first`, `name_middle`, `birth_month`, `birth_day`, and external IDs) are omitted from JSON when not present. `by_id` fields: `id`, `imdb_id`, `wikidata_id`, `tmdb_id`
+
 Internal IDs are stable and permanent — see [crosswalk-data](https://github.com/titles-media/crosswalk-data) for details on ID assignment.
 
 ## Contributing
 
-**To add or update film data** — open a pull request in [`titles-media/crosswalk-data`](https://github.com/titles-media/crosswalk-data). Changes there trigger an automated rebuild here.
+**To add or update data** — open a pull request in [`titles-media/crosswalk-data`](https://github.com/titles-media/crosswalk-data). Changes there trigger an automated rebuild here.
 
 **To contribute to the build tooling** — pull requests in this repo are welcome for changes to `scripts/`, workflows, or configuration.
 
